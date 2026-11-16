@@ -35,8 +35,13 @@ const BANNERS = ["/img/banners/banner-1.webp", "/img/banners/banner-2.webp", "/i
 
 // Home banners are added once (also on databases created before banners existed); deleting them later sticks.
 async function seedBanners(q: Q) {
+  // banners 2 and 3 have their headline on the left: show that part when the banner fills the hero box (once)
+  if (!(await q(`SELECT 1 FROM settings WHERE key = 'seed_banner_focus'`)).length) {
+    await q(`UPDATE gallery SET video_url = 'left' WHERE kind = 'banner' AND video_url = '' AND src IN ('/img/banners/banner-2.webp', '/img/banners/banner-3.webp')`);
+    await q(`INSERT INTO settings (key, value) VALUES ('seed_banner_focus', 'true') ON CONFLICT DO NOTHING`);
+  }
   if ((await q(`SELECT 1 FROM settings WHERE key = 'seed_banners'`)).length) return;
-  for (const [i, src] of BANNERS.entries()) await q(`INSERT INTO gallery (kind, src, position) VALUES ('banner',$1,$2)`, [src, i]);
+  for (const [i, src] of BANNERS.entries()) await q(`INSERT INTO gallery (kind, src, video_url, position) VALUES ('banner',$1,$2,$3)`, [src, i === 0 ? "" : "left", i]);
   await q(`INSERT INTO settings (key, value) VALUES ('seed_banners', 'true') ON CONFLICT DO NOTHING`);
 }
 
