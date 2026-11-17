@@ -305,3 +305,51 @@
 .svc-more{color:#fff;border-bottom:1px solid #fff;padding-bottom:6px}
 .service-card:hover .svc-more{color:var(--gold);border-color:var(--gold)}
 @media(max-width:520px){.service-card{aspect-ratio:auto;height:260px}.service-content{padding:22px}}
+
+/* ===== 2026-11-17 (5): header v2 (transparent over the home banner → white on scroll), stronger hero overlay, scroll reveal ===== */
+.header{transition:background .35s ease,border-color .35s ease,box-shadow .35s ease}
+.header-scrolled{box-shadow:0 8px 28px #00000012}
+.nav>a,.nav-drop>button{position:relative}
+.nav>a:before,.nav-drop>button:before{content:"";position:absolute;left:0;right:0;bottom:4px;height:2px;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform .3s ease}
+.nav>a:hover:before,.nav-drop:hover>button:before,.nav>a.active:before,.nav-drop.active>button:before{transform:scaleX(1)}
+.nav-drop>button:before{right:18px}
+@media(min-width:801px){
+  .header-home{position:fixed;left:0;right:0;top:0}
+  .header-over{background:transparent;border-bottom-color:#ffffff22;box-shadow:none}
+  .header-over .nav>a,.header-over .nav-drop>button,.header-over .head-phone,.header-over .nav-drop>button::after{color:#fff}
+  .header-over .nav a:hover,.header-over .nav-drop>button:hover{color:var(--gold)}
+  .header-over .search-toggle{color:#fff;border-color:#ffffff55}
+  .header-over .search-toggle:hover{color:var(--gold);border-color:var(--gold)}
+  .header-over .head-phone svg{color:var(--gold)}
+  .header-home ~ main .hero-full .hero-text{padding-top:82px}
+}
+/* top shade so the white menu reads on any banner */
+.hero-full:before{content:"";position:absolute;left:0;right:0;top:0;height:200px;background:linear-gradient(180deg,#000000a6,#0000);z-index:1;pointer-events:none}
+.hero-full{height:clamp(540px,50vw,720px)}
+.hero-overlay{background:linear-gradient(90deg,#000000eb 0%,#000000c7 40%,#00000094 70%,#00000059 100%)}
+@media(max-width:800px){.hero-overlay{background:#000000c2}}
+
+/* scroll reveal (one animation): fade up into place */
+.rv{opacity:0;translate:0 34px;transition:opacity .75s ease,translate .75s cubic-bezier(.2,.7,.2,1)}
+.rv.rv-in{opacity:1;translate:0 0}
+@media(prefers-reduced-motion:reduce){.rv{opacity:1;translate:none;transition:none}}
+
+/* ===== 2026-11-17 (6): glass header, service text at the bottom ===== */
+@media(min-width:801px){
+  .header-over{background:#0c0c0c40;-webkit-backdrop-filter:blur(16px) saturate(140%);backdrop-filter:blur(16px) saturate(140%);border-bottom:1px solid #ffffff2e}
+}
+.header-scrolled,.header:not(.header-over){background:#ffffffcc;-webkit-backdrop-filter:blur(18px) saturate(160%);backdrop-filter:blur(18px) saturate(160%)}
+.service-content{justify-content:flex-end;padding-bottom:30px}
+.service-card:after{background:linear-gradient(180deg,#00000026 0%,#00000073 45%,#000000d9 100%)}
+
+/* ===== 2026-11-17 (8): glass, a touch stronger than (6) ===== */
+@media(min-width:801px){
+  .header-over{background:#0c0c0c33;-webkit-backdrop-filter:blur(20px) saturate(150%);backdrop-filter:blur(20px) saturate(150%);border-bottom:1px solid #ffffff38}
+}
+.header-scrolled,.header:not(.header-over){background:#ffffffb8;-webkit-backdrop-filter:blur(20px) saturate(170%);backdrop-filter:blur(20px) saturate(170%)}
+
+/* ===== 2026-11-17 (9): logo -4px; scrolled/solid header = plain white, no glass ===== */
+.header .logo img{height:42px}
+@media(max-width:800px){.header .logo img{height:32px}}
+@media(max-width:520px){.header .logo img{height:26px}}
+.header-scrolled,.header:not(.header-over){background:#fff;-webkit-backdrop-filter:none;backdrop-filter:none}

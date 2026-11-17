@@ -25,8 +25,8 @@ const PRODUCTS: P[] = [
 ];
 
 const SERVICES = [
-  { slug: "mopirketeba", name: "მოპირკეთების სამუშაოები", short: "პროფესიონალური მოპირკეთება და კეთილმოწყობა", cover: "/img/installation.webp", description: SERVICE_FINISHING },
-  { slug: "transportireba", name: "ტრანსპორტირება", short: "პროდუქციის მიწოდება მთელი საქართველოს მასშტაბით", cover: "/img/transport.webp", description: SERVICE_TRANSPORT },
+  { slug: "mopirketeba", name: "მოპირკეთების სამუშაოები", short: "პროფესიონალური მოპირკეთება და კეთილმოწყობა", cover: "/img/installation-hd.webp", description: SERVICE_FINISHING },
+  { slug: "transportireba", name: "ტრანსპორტირება", short: "პროდუქციის მიწოდება მთელი საქართველოს მასშტაბით", cover: "/img/transport-hd.webp", description: SERVICE_TRANSPORT },
 ];
 
 const GALLERY = ["/img/installation.webp", "/img/product-1.webp", "/img/product-2.webp", "/img/product-3.webp", "/img/product-4.webp", "/img/product-5.webp", "/img/14.jpg", "/img/transport.webp"];
@@ -58,9 +58,20 @@ async function seedBannerText(q: Q) {
   await q(`INSERT INTO settings (key, value) VALUES ('seed_banner_text', 'true') ON CONFLICT DO NOTHING`);
 }
 
+// 2026-11-17: sharper (upscaled) service covers replace the 330px originals, once
+async function seedServiceCovers(q: Q) {
+  if ((await q(`SELECT 1 FROM settings WHERE key = 'seed_service_hd'`)).length) return;
+  for (const n of ["installation", "transport"]) {
+    await q(`UPDATE services SET cover = $1 WHERE cover = $2`, [`/img/${n}-hd.webp`, `/img/${n}.webp`]);
+    await q(`UPDATE images SET src = $1 WHERE owner = 'service' AND src = $2`, [`/img/${n}-hd.webp`, `/img/${n}.webp`]);
+  }
+  await q(`INSERT INTO settings (key, value) VALUES ('seed_service_hd', 'true') ON CONFLICT DO NOTHING`);
+}
+
 export async function seedIfEmpty(q: Q) {
   await seedBanners(q);
   await seedBannerText(q);
+  await seedServiceCovers(q);
   const [{ n }] = await q<{ n: number }>(`SELECT count(*)::int AS n FROM categories`);
   if (n > 0) return;
   const catId: Record<string, number> = {};

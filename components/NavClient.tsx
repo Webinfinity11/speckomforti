@@ -12,6 +12,16 @@ export function NavClient({ brandName, phone, categories, services }: { brandNam
   const path = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [open, setOpen] = useState<string | null>(null);
+  const [scrolled, setScrolled] = useState(false);
+  const home = path === "/";
+
+  // home: header floats transparent over the hero banner, turns solid white once the page scrolls
+  useEffect(() => {
+    const on = () => setScrolled(window.scrollY > 30);
+    on();
+    window.addEventListener("scroll", on, { passive: true });
+    return () => window.removeEventListener("scroll", on);
+  }, []);
 
   // close menus on navigation
   useEffect(() => { setMobileOpen(false); setOpen(null); }, [path]);
@@ -31,7 +41,7 @@ export function NavClient({ brandName, phone, categories, services }: { brandNam
 
   return (
     <>
-      <header className="header" id="top">
+      <header className={`header${home ? " header-home" : ""}${home && !scrolled && !mobileOpen ? " header-over" : ""}${scrolled ? " header-scrolled" : ""}`} id="top">
         <div className="container header-inner">
           <Link className="logo" href="/" aria-label={`${brandName} მთავარი`}>
             <img src="/img/logo_yellow.svg" alt={brandName} />
