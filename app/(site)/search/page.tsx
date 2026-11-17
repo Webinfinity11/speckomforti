@@ -26,7 +26,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
           {q.length < 2
             ? <div className="empty">შეიყვანეთ მინიმუმ 2 სიმბოლო.</div>
             : hits.length
-              ? <div className="product-grid">{hits.map((p) => <ProductCard key={p.id} href={`/products/${p.category_slug}/${p.slug}`} image={p.cover} title={p.name} meta={`SK / ${p.category_name}`} />)}</div>
+              ? <div className="product-grid">{hits.map((p) => <ProductCard key={p.id} href={`/products/${p.category_slug}/${p.slug}`} product={p} category={p.category_name} />)}</div>
               : <div className="empty">„{q}“ — ვერაფერი მოიძებნა. სცადეთ სხვა სიტყვა ან აირჩიეთ კატეგორია.</div>}
         </div>
       </section>

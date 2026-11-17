@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Fragment } from "react";
+import type { Product } from "@/lib/data";
 
 export type Crumb = { href?: string; label: string };
 
@@ -61,14 +62,20 @@ function RichBlock({ text }: { text: string }) {
   return <p>{rows.map((r, j) => <Fragment key={j}>{j > 0 && <br />}{r}</Fragment>)}</p>;
 }
 
-export function ProductCard({ href, image, title, meta, footer = "დეტალურად ნახვა" }: { href: string; image: string; title: string; meta?: string; footer?: string }) {
+// Shop-style product card: whole product on a white square, category, name, price or "on request", button.
+export function ProductCard({ href, product, category }: { href: string; product: Product; category: string }) {
   return (
-    <Link className="product-card" href={href}>
-      <div className="product-image">{image ? <img src={image} alt={title} loading="lazy" /> : <img src="/img/logo_yellow.svg" alt="" style={{ width: "50%", height: "auto", objectFit: "contain" }} />}</div>
-      <div className="product-meta">
-        <small>{meta || "SK / პროდუქცია"}</small>
-        <strong>{title}</strong>
-        <div className="product-footer"><span>{footer}</span><Arrow /></div>
+    <Link className="shop-card" href={href}>
+      <div className="shop-image">
+        <img src={product.cover || "/img/logo_yellow.svg"} alt={product.name} loading="lazy" className={product.cover ? undefined : "ph"} />
+      </div>
+      <div className="shop-body">
+        <small>{category}</small>
+        <strong>{product.name}</strong>
+        <div className="shop-foot">
+          <span className="shop-price">{product.price || "ფასი მოთხოვნით"}</span>
+          <span className="shop-btn">დეტალურად <Arrow /></span>
+        </div>
       </div>
     </Link>
   );

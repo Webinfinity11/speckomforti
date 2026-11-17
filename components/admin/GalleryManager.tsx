@@ -65,10 +65,17 @@ export function GalleryManager({ kind, items: initial }: { kind: "photo" | "vide
                 <span className="num">{i + 1}</span>
                 <button type="button" className="del" onClick={() => remove(it.id)} aria-label="წაშლა">×</button>
               </div>
-              <input
-                className="adm-caption" defaultValue={it.caption} placeholder={kind === "banner" ? "ბმული (არასავალდებულო), მაგ. /products" : "წარწერა (არასავალდებულო)"}
-                onBlur={(e) => { if (e.target.value !== it.caption) { it.caption = e.target.value; updateGalleryCaption(it.id, e.target.value); } }}
-              />
+              {kind === "banner" ? (
+                <textarea
+                  className="adm-caption" rows={4} defaultValue={it.caption} placeholder={"სათაური (პირველი ხაზი)\nტექსტი (შემდეგი ხაზები)"}
+                  onBlur={(e) => { if (e.target.value !== it.caption) { it.caption = e.target.value; updateGalleryCaption(it.id, e.target.value); } }}
+                />
+              ) : (
+                <input
+                  className="adm-caption" defaultValue={it.caption} placeholder="წარწერა (არასავალდებულო)"
+                  onBlur={(e) => { if (e.target.value !== it.caption) { it.caption = e.target.value; updateGalleryCaption(it.id, e.target.value); } }}
+                />
+              )}
               {kind === "banner" && (
                 <select className="adm-caption" defaultValue={it.focus || "center"} onChange={(e) => updateBannerFocus(it.id, e.target.value)} aria-label="რომელი ნაწილი ჩანდეს">
                   <option value="left">ჩანდეს მარცხენა ნაწილი</option>

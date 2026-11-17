@@ -9,12 +9,12 @@ const Arrow = () => (
 
 /* ---------- homepage carousel (same behaviour as the design's main.js) ---------- */
 
-export function ProductCarousel({ eyebrow, title, children, count }: { eyebrow: string; title: string; children: React.ReactNode; count: number }) {
+export function ProductCarousel({ title, children, count }: { title: string; children: React.ReactNode; count: number }) {
   const track = useRef<HTMLDivElement>(null);
   const pos = useRef(0);
   const slide = useCallback((want: number) => {
     const el = track.current;
-    const card = el?.querySelector<HTMLElement>(".product-card");
+    const card = el?.querySelector<HTMLElement>(".shop-card");
     if (!el || !card) return;
     const visible = innerWidth <= 800 ? 2 : innerWidth <= 1150 ? 3 : 4;
     pos.current = Math.min(Math.max(want, 0), Math.max(0, count - visible));
@@ -29,7 +29,7 @@ export function ProductCarousel({ eyebrow, title, children, count }: { eyebrow: 
   return (
     <>
       <div className="section-heading">
-        <div><div className="eyebrow">{eyebrow}</div><h2>{title}</h2></div>
+        <div><h2>{title}</h2></div>
         <div className="carousel-control">
           <button className="circle-btn" aria-label="წინა" onClick={() => slide(pos.current - 1)}>‹</button>
           <button className="circle-btn" aria-label="შემდეგი" onClick={() => slide(pos.current + 1)}>›</button>

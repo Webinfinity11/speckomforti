@@ -8,7 +8,7 @@ import { HeaderSearch } from "./HeaderSearch";
 type Item = { href: string; label: string };
 type Menu = { key: string; label: string; base: string[]; items: Item[] };
 
-export function NavClient({ brandName, topLeft, topRight, categories, services }: { brandName: string; topLeft: string; topRight: string; categories: Item[]; services: Item[] }) {
+export function NavClient({ brandName, phone, categories, services }: { brandName: string; phone: string; categories: Item[]; services: Item[] }) {
   const path = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [open, setOpen] = useState<string | null>(null);
@@ -31,9 +31,6 @@ export function NavClient({ brandName, topLeft, topRight, categories, services }
 
   return (
     <>
-      {(topLeft || topRight) && (
-        <div className="topline"><div className="container"><div>{topLeft}</div><span>{topRight}</span></div></div>
-      )}
       <header className="header" id="top">
         <div className="container header-inner">
           <Link className="logo" href="/" aria-label={`${brandName} მთავარი`}>
@@ -54,7 +51,15 @@ export function NavClient({ brandName, topLeft, topRight, categories, services }
             <Link href="/contact" className={isIn(["/contact"]) ? "active" : undefined}>კონტაქტი</Link>
           </nav>
           <HeaderSearch />
-          <div className="head-actions"><Link className="outline-btn" href="/products">კატალოგი</Link></div>
+          <div className="head-actions">
+            {phone && (
+              <a className="head-phone" href={`tel:${phone.replace(/[^+d]/g, "")}`}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2" /></svg>
+                <span>{phone}</span>
+              </a>
+            )}
+            <Link className="gold-btn" href="/products">კატალოგი</Link>
+          </div>
           <button className="menu-toggle" aria-label="მენიუს გახსნა" aria-controls="nav" aria-expanded={mobileOpen} onClick={() => setMobileOpen((o) => !o)}>
             {mobileOpen ? "✕" : "☰"}
           </button>

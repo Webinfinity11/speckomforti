@@ -6,8 +6,7 @@ export async function Header() {
   return (
     <NavClient
       brandName={site.brandName}
-      topLeft={site.topLeft}
-      topRight={site.topRight}
+      phone={site.phone}
       categories={categories.map((c) => ({ href: `/products/${c.slug}`, label: c.name }))}
       services={services.map((s) => ({ href: `/services/${s.slug}`, label: s.name }))}
     />

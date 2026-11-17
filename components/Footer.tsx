@@ -8,12 +8,16 @@ export async function Footer() {
   const socials = [["Facebook", site.facebook], ["Instagram", site.instagram], ["YouTube", site.youtube], ["TikTok", site.tiktok]].filter(([, u]) => u);
   return (
     <>
-      <section id="contact" className="cta">
-        <div className="container">
-          <div className="eyebrow">კონტაქტი / SK</div>
-          <h2>{home.ctaTitle}</h2>
-          <p>{home.ctaText}</p>
-          <Link className="white-btn" href="/contact">{home.ctaButton} <Arrow /></Link>
+      <section id="contact" className="cta-band">
+        <div className="container cta-inner">
+          <div>
+            <h2>{home.ctaTitle}</h2>
+            <p>{home.ctaText}</p>
+          </div>
+          <div className="cta-actions">
+            <Link className="gold-btn" href="/contact">{home.ctaButton} <Arrow /></Link>
+            {site.phone && <a className="outline-btn" href={tel(site.phone)}>{site.phone}</a>}
+          </div>
         </div>
       </section>
       <footer className="footer">

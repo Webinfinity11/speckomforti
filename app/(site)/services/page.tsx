@@ -13,16 +13,15 @@ export default async function ServicesPage() {
       <section className="section services">
         <div className="container">
           <div className="service-grid">
-            {services.map((s, i) => (
-              <article className="service-card" key={s.id}>
-                {s.cover ? <img src={s.cover} alt={s.name} loading="lazy" /> : <div />}
-                <div className="service-content">
-                  <div className="eyebrow">{String(i + 1).padStart(2, "0")} / სერვისი</div>
-                  <h3>{s.name}</h3>
-                  <p>{s.short}</p>
-                  <Link className="white-btn" href={`/services/${s.slug}`}>დეტალები ↗</Link>
-                </div>
-              </article>
+            {services.map((s) => (
+              <Link className="service-card" href={`/services/${s.slug}`} key={s.id}>
+                  <img src={s.cover || "/img/installation.webp"} alt={s.name} loading="lazy" />
+                  <div className="service-content">
+                    <h3>{s.name}</h3>
+                    <p>{s.short}</p>
+                    <span className="svc-more">დეტალურად <span aria-hidden>↗</span></span>
+                  </div>
+                </Link>
             ))}
           </div>
         </div>

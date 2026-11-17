@@ -87,7 +87,7 @@ export default async function ProductPage({ params }: Props) {
             <div className="product-grid">
               {related.map((x) => {
                 const xc = catById.get(x.category_id);
-                return xc ? <ProductCard key={x.id} href={`/products/${xc.slug}/${x.slug}`} image={x.cover} title={x.name} meta={`SK / ${xc.name}`} /> : null;
+                return xc ? <ProductCard key={x.id} href={`/products/${xc.slug}/${x.slug}`} product={x} category={xc.name} /> : null;
               })}
             </div>
           </div>

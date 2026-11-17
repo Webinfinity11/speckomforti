@@ -31,7 +31,7 @@ const SERVICES = [
 
 const GALLERY = ["/img/installation.webp", "/img/product-1.webp", "/img/product-2.webp", "/img/product-3.webp", "/img/product-4.webp", "/img/product-5.webp", "/img/14.jpg", "/img/transport.webp"];
 
-const BANNERS = ["/img/banners/banner-1.webp", "/img/banners/banner-2.webp", "/img/banners/banner-3.webp"];
+const BANNERS = ["/img/banners/hero-1.webp", "/img/banners/hero-2.webp"];
 
 // Home banners are added once (also on databases created before banners existed); deleting them later sticks.
 async function seedBanners(q: Q) {
@@ -40,13 +40,27 @@ async function seedBanners(q: Q) {
     await q(`UPDATE gallery SET video_url = 'left' WHERE kind = 'banner' AND video_url = '' AND src IN ('/img/banners/banner-2.webp', '/img/banners/banner-3.webp')`);
     await q(`INSERT INTO settings (key, value) VALUES ('seed_banner_focus', 'true') ON CONFLICT DO NOTHING`);
   }
-  if ((await q(`SELECT 1 FROM settings WHERE key = 'seed_banners'`)).length) return;
-  for (const [i, src] of BANNERS.entries()) await q(`INSERT INTO gallery (kind, src, video_url, position) VALUES ('banner',$1,$2,$3)`, [src, i === 0 ? "" : "left", i]);
-  await q(`INSERT INTO settings (key, value) VALUES ('seed_banners', 'true') ON CONFLICT DO NOTHING`);
+  // v2 (2026-11-17): full-width hero with text over the banner; the old banners had their own headline baked in, replace them once
+  if ((await q(`SELECT 1 FROM settings WHERE key = 'seed_banners_v2'`)).length) return;
+  await q(`DELETE FROM gallery WHERE kind = 'banner' AND src LIKE '/img/banners/banner-%'`);
+  for (const [i, src] of BANNERS.entries()) await q(`INSERT INTO gallery (kind, src, video_url, position) VALUES ('banner',$1,'',$2)`, [src, i]);
+  await q(`INSERT INTO settings (key, value) VALUES ('seed_banners_v2', 'true') ON CONFLICT DO NOTHING`);
+}
+
+// v3 (2026-11-17): each banner carries its own hero text in caption (first line = title, rest = text); fill once if empty
+const BANNER_TEXT: Record<string, string> = {
+  "/img/banners/hero-1.webp": "ბეტონის ფილა და ბორდიური თქვენი ეზოსთვის\nვიბროპრესირებული ფილები, ბორდიურები და ლანდშაფტის ელემენტები სხვადასხვა ფორმისა და ფერის. შეარჩიეთ მასალა, რომელიც წლების განმავლობაში შეინარჩუნებს იერსა და სიმტკიცეს.",
+  "/img/banners/hero-2.webp": "საკუთარი წარმოება და ლაბორატორიული კონტროლი\nყოველი პარტია გადის სიმტკიცისა და ყინვაგამძლეობის შემოწმებას ჩვენს ლაბორატორიაში. ბეტონისა და პემზის ბლოკები, ფილები და ბორდიურები სტანდარტების სრული დაცვით.",
+};
+async function seedBannerText(q: Q) {
+  if ((await q(`SELECT 1 FROM settings WHERE key = 'seed_banner_text'`)).length) return;
+  for (const [src, text] of Object.entries(BANNER_TEXT)) await q(`UPDATE gallery SET caption = $1 WHERE kind = 'banner' AND src = $2 AND caption = ''`, [text, src]);
+  await q(`INSERT INTO settings (key, value) VALUES ('seed_banner_text', 'true') ON CONFLICT DO NOTHING`);
 }
 
 export async function seedIfEmpty(q: Q) {
   await seedBanners(q);
+  await seedBannerText(q);
   const [{ n }] = await q<{ n: number }>(`SELECT count(*)::int AS n FROM categories`);
   if (n > 0) return;
   const catId: Record<string, number> = {};

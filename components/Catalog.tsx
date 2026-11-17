@@ -28,7 +28,7 @@ export async function Catalog({ active }: { active?: Category }) {
             <div className="product-grid">
               {products.map((p) => {
                 const c = catById.get(p.category_id);
-                return c ? <ProductCard key={p.id} href={`/products/${c.slug}/${p.slug}`} image={p.cover} title={p.name} meta={`SK / ${c.name}`} /> : null;
+                return c ? <ProductCard key={p.id} href={`/products/${c.slug}/${p.slug}`} product={p} category={c.name} /> : null;
               })}
             </div>
           ) : <div className="empty">ამ კატეგორიაში პროდუქცია მალე დაემატება.</div>}

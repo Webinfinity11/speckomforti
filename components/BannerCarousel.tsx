@@ -2,11 +2,10 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-type Slide = { src: string; link: string; alt: string; focus?: string };
+type Slide = { src: string; alt: string; focus?: string; title: string; text: string; gold?: React.ReactNode };
 
-// Slides inside the hero's right photo area (same box as the single hero photo). The box has the banners' proportions,
-// so each banner fills it whole; slides cross-fade. Arrows, dots, autoplay, swipe.
-export function HeroSlider({ slides, label, interval = 6000 }: { slides: Slide[]; label?: string; interval?: number }) {
+// Full-width hero: banners cross-fade behind a dark overlay; each banner has its own title/text on top (shared buttons). Arrows, dots, autoplay, swipe.
+export function HeroSlider({ slides, children, interval = 6000 }: { slides: Slide[]; children: React.ReactNode; interval?: number }) {
   const [i, setI] = useState(0);
   const [paused, setPaused] = useState(false);
   const touchX = useRef<number | null>(null);
@@ -20,8 +19,8 @@ export function HeroSlider({ slides, label, interval = 6000 }: { slides: Slide[]
   }, [n, paused, go, interval, i]);
 
   return (
-    <div
-      className="hero-photo hero-slider"
+    <section
+      className="hero-full"
       aria-roledescription="carousel"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
@@ -34,15 +33,25 @@ export function HeroSlider({ slides, label, interval = 6000 }: { slides: Slide[]
       }}
     >
       {slides.map((s, k) => {
-                const pos = s.focus === "left" || s.focus === "right" ? s.focus : "center";
-        const img = <img src={s.src} alt={s.alt} loading={k === 0 ? "eager" : "lazy"} draggable={false} style={{ objectPosition: `${pos} center` }} />;
+        const pos = s.focus === "left" || s.focus === "right" ? s.focus : "center";
         return (
-          <div className={`hero-slide${k === i ? " active" : ""}`} key={s.src + k} aria-hidden={k !== i}>
-            {s.link ? <a href={s.link} tabIndex={k === i ? 0 : -1}>{img}</a> : img}
+          <div className={`hero-bg${k === i ? " active" : ""}`} key={s.src + k} aria-hidden={k !== i}>
+            <img src={s.src} alt={s.alt} loading={k === 0 ? "eager" : "lazy"} draggable={false} style={{ objectPosition: `${pos} center` }} />
           </div>
         );
       })}
-      {label && <div className="hero-photo-label">{label}</div>}
+      <div className="hero-overlay" />
+      <div className="container hero-text">
+        <div className="hero-copies">
+          {slides.map((s, k) => (
+            <div className={`hero-copy-slide${k === i ? " active" : ""}`} key={k} aria-hidden={k !== i}>
+              <h1>{s.gold ?? s.title}</h1>
+              {s.text && <p>{s.text}</p>}
+            </div>
+          ))}
+        </div>
+        {children}
+      </div>
       {n > 1 && (
         <>
           <button className="banner-arrow prev" aria-label="წინა" onClick={() => go(-1)}>
@@ -56,6 +65,6 @@ export function HeroSlider({ slides, label, interval = 6000 }: { slides: Slide[]
           </div>
         </>
       )}
-    </div>
+    </section>
   );
 }
